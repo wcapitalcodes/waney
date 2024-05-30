@@ -1,7 +1,6 @@
 import streamlit as st
 import openai
 from llama_index.llms.openai import OpenAI
-from st_chat_message import message
 
 try:
     from llama_index import (
