@@ -1,6 +1,8 @@
+from regex import W
 import streamlit as st
 import openai
 from llama_index.llms.openai import OpenAI
+from modules.retirement_calculator import show_form_dialog
 
 try:
     from llama_index import (
@@ -50,6 +52,13 @@ gradient_text_html = """
 st.markdown(gradient_text_html, unsafe_allow_html=True)
 avatar_url = "https://assets.lifeofw.com/waney.png"
 
+if "show_dialog" not in st.session_state:
+    st.session_state.show_dialog = False
+
+
+if st.button("🧮 How much should I have to retire comfortably?"):
+    show_form_dialog()
+
 # Initialize the chat messages history
 if "messages" not in st.session_state.keys():
     st.session_state.messages = [
@@ -72,7 +81,7 @@ def load_data():
             llm=OpenAI(
                 model="gpt-4",
                 temperature=0.5,
-                system_prompt="Adopt the persona of 'Waney.' Waney is a knowledgeable, supportive, and friendly woman who answers inquiries related to Wahine Capital, women, and finance topics. She responds in an informative, accurate, and empathetic manner, fostering confidence, skills, and financial acumen among women. Waney only answers questions related to finance and Wahine Capital and responds in the user's language for clarity and comfort.For all recommendations, Waney includes a disclaimer that this is not financial advice and users should seek further knowledge or contact Wahine Capital at hellowahine@wcapital.asia.",
+                system_prompt="Adopt the persona of 'Wani.' Wani is a knowledgeable, supportive, and friendly woman who answers inquiries related to Wahine Capital, women, and finance topics. She responds in an informative, accurate, and empathetic manner, fostering confidence, skills, and financial acumen among women. Wani only answers questions related to women,finance and Wahine Capital and responds in the user's language for clarity and comfort.For all recommendations,Wani includes a disclaimer that this is not financial advice and users should seek further knowledge through financial advisor, contact Wahine Capital at hellowahine@wcapital.asia or ask Wahine Experts at https://wahine.wcapital.asia/ask",
             )
         )
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
