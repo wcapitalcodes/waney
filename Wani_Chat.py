@@ -27,6 +27,8 @@ st.set_page_config(
     initial_sidebar_state="auto",
     menu_items=None,
 )
+st.sidebar.header("Chat with Wani")
+st.sidebar.write("Chat with Wani. Answer all your questions related to Wahine Capital, women and finance.")
 openai.api_key = st.secrets.openai_key
 
 gradient_text_html = """
@@ -45,26 +47,20 @@ gradient_text_html = """
     font-size: 3em;
 }
 </style>
-<div style="display: flex;align-items:center;margin-bottom:50px;"><img src="https://assets.lifeofw.com/waney.png" width="80px" style="margin-right:10px;" /><div class="flex flex-col"><h5 class="gradient-text">Wani</h5></div></div>
+<div style="display: flex;align-items:center;margin-bottom:50px;"><img src="https://assets.lifeofw.com/waney.png" width="80px" style="margin-right:10px;" /><div class="flex flex-col"><h5 class="gradient-text">Chat with Wani</h5></div></div>
 """
 
 
 st.markdown(gradient_text_html, unsafe_allow_html=True)
 avatar_url = "https://assets.lifeofw.com/waney.png"
 
-if "show_dialog" not in st.session_state:
-    st.session_state.show_dialog = False
-
-
-if st.button("🧮 How much should I have to retire comfortably?"):
-    show_form_dialog()
 
 # Initialize the chat messages history
 if "messages" not in st.session_state.keys():
     st.session_state.messages = [
         {
             "role": "assistant",
-            "content": "Hi there! I'm Wani. I'm here to help with any questions you have about Wahine Capital, women, and finance. 😊",
+            "content": "Hi there! I'm Wani, your friendly assistant bot here to help with any questions you have about Wahine Capital, Women, and Finance. Just a quick note: I'm still in Beta, so please avoid sharing any confidential or sensitive information during our chat. Thanks! 😊",
             "avatar": avatar_url,
         }
     ]
