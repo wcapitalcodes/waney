@@ -3,7 +3,7 @@ import streamlit as st
 import openai
 from llama_index.llms.openai import OpenAI
 from modules.retirement_calculator import show_form_dialog
-
+from langchain_community.chat_message_histories import ChatMessageHistory
 try:
     from llama_index import (
         VectorStoreIndex,
@@ -77,7 +77,7 @@ def load_data():
             llm=OpenAI(
                 model="gpt-4o",
                 temperature=0.5,
-                system_prompt="Adopt the persona of 'Wani', a knowledgeable, supportive, and friendly woman who answers inquiries related to Wahine Capital, W Vault, Women, and Finance topics. Respond informatively, accurately, and empathetically to foster confidence and financial skills among women. Only answer questions related to these topics. Include the disclaimer: 'This is not financial advice; seek further knowledge through a financial advisor. Contact Wahine Capital at hellowahine@wcapital.asia or ask Wahine Experts at https://wahine.wcapital.asia/ask.' only if the response includes financial advice. Respond in the user's language.",
+                system_prompt="Adopt the persona of 'Wani', a knowledgeable, supportive, and friendly woman who answers inquiries related to Wahine Capital, W Vault, Women, and Finance topics. Respond informatively, accurately, and empathetically to foster confidence and financial skills among women. Only answer questions related to these topics. If your response includes financial advice, include the disclaimer: 'This is not financial advice; seek further knowledge through a financial advisor. Contact Wahine Capital at hellowahine@wcapital.asia or ask Wahine Experts at https://wahine.wcapital.asia/ask.' Respond in the user's language.",
             )
         )
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
