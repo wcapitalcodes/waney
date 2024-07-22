@@ -4,6 +4,12 @@ import openai
 from llama_index.llms.openai import OpenAI
 from modules.retirement_calculator import show_form_dialog
 from langchain_community.chat_message_histories import ChatMessageHistory
+from streamlit_gsheets import GSheetsConnection
+from datetime import datetime
+import pandas as pd
+import gspread
+from google.oauth2.service_account import Credentials
+
 try:
     from llama_index import (
         VectorStoreIndex,
@@ -49,6 +55,40 @@ gradient_text_html = """
 </style>
 <div style="display: flex;align-items:center;margin-bottom:50px;"><img src="https://assets.lifeofw.com/waney.png" width="80px" style="margin-right:10px;" /><div class="flex flex-col"><h5 class="gradient-text">Chat with Wani</h5><h6>Wani will answer all your questions related to Wahine Capital, W Vault, Women and Finance. Whatever Wani says is not financial advice, and users should seek further knowledge through a financial advisor..</h6></div></div>
 """
+# Load Google Sheets credentials from Streamlit secrets
+gsheet_credentials = {
+    "type": st.secrets['connections']['gsheets']['type'],
+    "project_id": st.secrets['connections']['gsheets']["project_id"],
+    "private_key_id": st.secrets['connections']['gsheets']['private_key_id'],
+    "private_key": st.secrets['connections']['gsheets']['private_key'],
+    "client_email": st.secrets['connections']['gsheets']['client_email'],
+    "client_id": st.secrets['connections']['gsheets']['client_id'],
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": st.secrets['connections']['gsheets']['client_x509_cert_url'],
+    "universe_domain": "googleapis.com"
+}
+
+# Define the scope for Google Sheets API
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+
+# Function to append data to Google Sheets
+def append_data(input,email=""):
+    # Authenticate and create a client to interact with Google Sheets
+    credentials = Credentials.from_service_account_info(gsheet_credentials, scopes=scope)
+    gc = gspread.authorize(credentials)
+    
+    # Open the Google Sheet by URL
+    sheet_url = st.secrets['connections']['gsheets']["spreadsheet"]
+    sh = gc.open_by_url(sheet_url)
+    
+    # Select the first worksheet
+    worksheet = sh.sheet1
+    
+    # Append the new row
+    email = st.experimental_user.email if st.experimental_user.email else ""
+    worksheet.append_row([input, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), email])
 
 
 st.markdown(gradient_text_html, unsafe_allow_html=True)
@@ -135,6 +175,7 @@ if prompt := st.chat_input("Your question"):
     st.session_state.messages.append(
         {"role": "user", "content": prompt, "is_user": True}
     )
+    append_data(prompt)
 
 # Display the prior chat messages
 for message in st.session_state.messages:
