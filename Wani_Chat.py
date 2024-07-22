@@ -1,3 +1,4 @@
+import uuid
 from regex import W
 import streamlit as st
 import openai
@@ -9,6 +10,8 @@ from datetime import datetime
 import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
+from mixpanel import Mixpanel
+
 
 try:
     from llama_index import (
@@ -35,7 +38,17 @@ st.set_page_config(
 )
 st.sidebar.header("Chat with Wani")
 st.sidebar.write("Chat with Wani. Answer all your questions related to Wahine Capital, women and finance. \n Whatever Wani says is not financial advice, and users should seek further knowledge through a financial advisor. Contact Wahine Capital at hellowahine@wcapital.asia or ask Wahine Experts at https://wahine.wcapital.asia/ask.")
+
 openai.api_key = st.secrets.openai_key
+
+mp = Mixpanel(st.secrets['mixpanel']['token'])
+
+user_id = str(uuid.uuid4())
+
+# Track a page view
+mp.track(user_id, 'Page View', {
+    'page': 'Wani Chat'
+})
 
 gradient_text_html = """
 <style>
@@ -175,7 +188,11 @@ if prompt := st.chat_input("Your question"):
     st.session_state.messages.append(
         {"role": "user", "content": prompt, "is_user": True}
     )
+    
     append_data(prompt)
+    mp.track(user_id, 'Chat Input', {
+            'input_data': prompt
+    })
 
 # Display the prior chat messages
 for message in st.session_state.messages:

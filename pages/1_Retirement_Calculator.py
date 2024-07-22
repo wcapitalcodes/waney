@@ -1,4 +1,7 @@
+import uuid
 import streamlit as st
+from mixpanel import Mixpanel
+
 st.set_page_config(page_title="Retirement Calculator", page_icon="🧘🏼")
 st.sidebar.header("🧘🏼 Retirement Calculator")
 st.sidebar.write("Calculate how much how much you will need to have a comfy retirement.")
@@ -20,6 +23,15 @@ gradient_text_html = """
 </style>
 <div style="display: flex;align-items:center;margin-bottom:30px;"><h5 style="font-size:50px">🧘🏼</h5><div class="flex flex-col"><h5 class="gradient-text">Retirement Calculator</h5><h6>Let's calculate how much you will need to have a comfy retirement.</h6></div></div>
 """
+
+mp = Mixpanel(st.secrets['mixpanel']['token'])
+
+user_id = str(uuid.uuid4())
+
+# Track a page view
+mp.track(user_id, 'Page View', {
+    'page': 'Retirement Calculator'
+})
 
 st.markdown(gradient_text_html, unsafe_allow_html=True)
 
