@@ -74,7 +74,7 @@ gsheet_credentials = {
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
 # Function to append data to Google Sheets
-def append_data(input):
+def append_data(input,email=""):
     # Authenticate and create a client to interact with Google Sheets
     credentials = Credentials.from_service_account_info(gsheet_credentials, scopes=scope)
     gc = gspread.authorize(credentials)
@@ -87,7 +87,8 @@ def append_data(input):
     worksheet = sh.sheet1
     
     # Append the new row
-    worksheet.append_row([input, datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
+    email = st.experimental_user.email if st.experimental_user.email else ""
+    worksheet.append_row([input, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), email])
 
 
 st.markdown(gradient_text_html, unsafe_allow_html=True)
