@@ -37,18 +37,18 @@ st.set_page_config(
     menu_items=None,
 )
 st.sidebar.header("Chat with Wani")
-st.sidebar.write("Chat with Wani. Answer all your questions related to Wahine Capital, women and finance. \n Whatever Wani says is not financial advice, and users should seek further knowledge through a financial advisor. Contact Wahine Capital at hellowahine@wcapital.asia or ask Wahine Experts at https://wahine.wcapital.asia/ask.")
+st.sidebar.write(
+    "Chat with Wani. Answer all your questions related to Wahine Capital, women and finance. \n Whatever Wani says is not financial advice, and users should seek further knowledge through a financial advisor. Contact Wahine Capital at hellowahine@wcapital.asia or ask Wahine Experts at https://wahine.wcapital.asia/ask."
+)
 
 openai.api_key = st.secrets.openai_key
 
-mp = Mixpanel(st.secrets['mixpanel']['token'])
+mp = Mixpanel(st.secrets["mixpanel"]["token"])
 
 user_id = str(uuid.uuid4())
 
 # Track a page view
-mp.track(user_id, 'Page View', {
-    'page': 'Wani Chat'
-})
+mp.track(user_id, "Page View", {"page": "Wani Chat"})
 
 gradient_text_html = """
 <style>
@@ -70,35 +70,43 @@ gradient_text_html = """
 """
 # Load Google Sheets credentials from Streamlit secrets
 gsheet_credentials = {
-    "type": st.secrets['connections']['gsheets']['type'],
-    "project_id": st.secrets['connections']['gsheets']["project_id"],
-    "private_key_id": st.secrets['connections']['gsheets']['private_key_id'],
-    "private_key": st.secrets['connections']['gsheets']['private_key'],
-    "client_email": st.secrets['connections']['gsheets']['client_email'],
-    "client_id": st.secrets['connections']['gsheets']['client_id'],
+    "type": st.secrets["connections"]["gsheets"]["type"],
+    "project_id": st.secrets["connections"]["gsheets"]["project_id"],
+    "private_key_id": st.secrets["connections"]["gsheets"]["private_key_id"],
+    "private_key": st.secrets["connections"]["gsheets"]["private_key"],
+    "client_email": st.secrets["connections"]["gsheets"]["client_email"],
+    "client_id": st.secrets["connections"]["gsheets"]["client_id"],
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
     "token_uri": "https://oauth2.googleapis.com/token",
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": st.secrets['connections']['gsheets']['client_x509_cert_url'],
-    "universe_domain": "googleapis.com"
+    "client_x509_cert_url": st.secrets["connections"]["gsheets"][
+        "client_x509_cert_url"
+    ],
+    "universe_domain": "googleapis.com",
 }
 
 # Define the scope for Google Sheets API
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+scope = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/drive",
+]
+
 
 # Function to append data to Google Sheets
-def append_data(input,email=""):
+def append_data(input, email=""):
     # Authenticate and create a client to interact with Google Sheets
-    credentials = Credentials.from_service_account_info(gsheet_credentials, scopes=scope)
+    credentials = Credentials.from_service_account_info(
+        gsheet_credentials, scopes=scope
+    )
     gc = gspread.authorize(credentials)
-    
+
     # Open the Google Sheet by URL
-    sheet_url = st.secrets['connections']['gsheets']["spreadsheet"]
+    sheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
     sh = gc.open_by_url(sheet_url)
-    
+
     # Select the first worksheet
     worksheet = sh.sheet1
-    
+
     # Append the new row
     email = st.experimental_user.email if st.experimental_user.email else ""
     worksheet.append_row([input, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), email])
@@ -130,7 +138,7 @@ def load_data():
             llm=OpenAI(
                 model="gpt-4o",
                 temperature=0.5,
-                system_prompt="You are 'Wani', a knowledgeable, supportive, and friendly AI assistant specializing in Wahine Capital, W Vault, women in finance, finance and business. Your goal is to empower women through financial knowledge and empathy. Answer user inquiries clearly and accurately. If the response includes financial advice, include the disclaimer: 'This is not financial advice; seek further knowledge through a financial advisor. Contact Wahine Capital at hellowahine@wcapital.asia or ask Wahine Experts at https://wahine.wcapital.asia/ask.' Respond in the user's language.",
+                system_prompt="You are 'Wani', a supportive AI financial coach specializing in budgeting, personal finance, and goal-setting. Focus on empowering women to achieve financial well-being.  Prioritize inquiries about budgeting, financial planning, reaching goals, Wahine Capital products (especially those for women), and W Vault investments.  Always state: 'This isn't financial advice. Consult an advisor or contact Wahine Capital at hellowahine@wcapital.asia or visit https://wahine.wcapital.asia/ask.' when discussing finances. Empathize with users' financial concerns, offer encouragement, and provide clear, actionable answers in their language.",
             )
         )
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
@@ -145,28 +153,28 @@ if "chat_engine" not in st.session_state.keys():
         chat_mode="condense_question", verbose=True
     )
 
-col1, col2= st.columns(2)
+col1, col2 = st.columns(2)
 with col1:
-    if st.button("Who is Wahine Capital?",use_container_width=True):
+    if st.button("Who is Wahine Capital?", use_container_width=True):
         question = "Who is Wahine Capital?"
         st.session_state.messages.append(
             {"role": "user", "content": question, "is_user": True}
         )
 with col2:
-    if st.button("What is a Digital Vault?",use_container_width=True):
+    if st.button("What is a Digital Vault?", use_container_width=True):
         question = "What is Digital Vault?"
         st.session_state.messages.append(
             {"role": "user", "content": question, "is_user": True}
         )
 col3, col4 = st.columns(2)
 with col3:
-    if st.button("What is W Vault?",use_container_width=True):
+    if st.button("What is W Vault?", use_container_width=True):
         question = "What is W Vault?"
         st.session_state.messages.append(
             {"role": "user", "content": question, "is_user": True}
         )
 with col4:
-    if st.button("What is Notifier List?",use_container_width=True):
+    if st.button("What is Notifier List?", use_container_width=True):
         question = "What is Notifier List?"
         st.session_state.messages.append(
             {"role": "user", "content": question, "is_user": True}
@@ -175,12 +183,11 @@ with col4:
 col5, col6 = st.columns(2)
 
 with col5:
-     if st.button("What is Access List?",use_container_width=True):
+    if st.button("What is Access List?", use_container_width=True):
         question = "What is Access List?"
         st.session_state.messages.append(
             {"role": "user", "content": question, "is_user": True}
         )
-
 
 
 # Prompt for user input and save to chat history
@@ -188,11 +195,9 @@ if prompt := st.chat_input("Your question"):
     st.session_state.messages.append(
         {"role": "user", "content": prompt, "is_user": True}
     )
-    
+
     append_data(prompt)
-    mp.track(user_id, 'Chat Input', {
-            'input_data': prompt
-    })
+    mp.track(user_id, "Chat Input", {"input_data": prompt})
 
 # Display the prior chat messages
 for message in st.session_state.messages:
@@ -203,7 +208,9 @@ for message in st.session_state.messages:
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant", avatar=avatar_url):
         with st.spinner("Thinking..."):
-            response = st.session_state.chat_engine.chat(st.session_state.messages[-1]["content"])
+            response = st.session_state.chat_engine.chat(
+                st.session_state.messages[-1]["content"]
+            )
             st.write(response.response)
             message = {
                 "role": "assistant",
