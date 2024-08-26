@@ -1,6 +1,7 @@
 import uuid
 import streamlit as st
 from mixpanel import Mixpanel
+
 st.set_page_config(page_title="Malaysian Tax Calculator", page_icon="💼")
 st.sidebar.header("💼 Malaysian Tax Calculator")
 st.sidebar.write("Calculate how much tax you will need to pay based on your income.")

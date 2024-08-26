@@ -132,7 +132,7 @@ def load_data():
     with st.spinner(
         text="Loading and indexing our database – hang tight! This should take 1-2 minutes."
     ):
-        reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
+        reader = SimpleDirectoryReader(input_dir=st.secrets["data_dir"], recursive=True)
         docs = reader.load_data()
         service_context = ServiceContext.from_defaults(
             llm=OpenAI(
