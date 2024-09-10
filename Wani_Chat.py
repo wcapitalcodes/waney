@@ -29,7 +29,6 @@ except ImportError:
     )
 
 st.set_page_config(
-    base_url="/wani",
     page_title="Chat with Wani. Answer all your questions related to Wahine Capital, women and finance.",
     page_icon="",
     layout="centered",
