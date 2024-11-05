@@ -12,7 +12,6 @@ import gspread
 from google.oauth2.service_account import Credentials
 from mixpanel import Mixpanel
 
-
 try:
     from llama_index import (
         VectorStoreIndex,
@@ -26,6 +25,7 @@ except ImportError:
         ServiceContext,
         Document,
         SimpleDirectoryReader,
+        Settings
     )
 
 st.set_page_config(
@@ -133,14 +133,14 @@ def load_data():
     ):
         reader = SimpleDirectoryReader(input_dir=st.secrets["data_dir"], recursive=True)
         docs = reader.load_data()
-        service_context = ServiceContext.from_defaults(
+        settings = Settings(
             llm=OpenAI(
                 model="gpt-4o",
                 temperature=0.5,
                 system_prompt="You are 'Wani', a supportive AI financial coach specializing in budgeting, personal finance, and goal-setting. Focus on empowering women to achieve financial well-being.  Prioritize inquiries about budgeting, financial planning, reaching goals, Wahine Capital products (especially those for women), and W Vault investments.  Always state: 'This isn't financial advice. Consult an advisor or contact Wahine Capital at hellowahine@wcapital.asia or visit https://wahine.wcapital.asia/ask.' when discussing finances. Empathize with users' financial concerns, offer encouragement, and provide clear, actionable answers in their language.",
             )
         )
-        index = VectorStoreIndex.from_documents(docs, service_context=service_context)
+        index = VectorStoreIndex.from_documents(docs, settings=settings)
         return index
 
 
