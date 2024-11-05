@@ -172,7 +172,7 @@ st-gsheets-connection==0.0.4
 st-theme==1.2.3
 starlette==0.40.0
 storage3==0.7.7
-streamlit==1.36.0
+streamlit==1.37.0
 streamlit-analytics==0.4.1
 streamlit-camera-input-live==0.2.0
 streamlit-card==1.0.2
